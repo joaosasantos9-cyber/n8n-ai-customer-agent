@@ -1,0 +1,6 @@
+﻿numero_encomenda,produto,estado,data_prevista,transportadora
+TC-55821,Televisão 55 polegadas,atrasada,14/11/2026,CTT Expresso
+TC-10234,Portátil Lenovo IdeaPad 5,entregue,03/11/2026,DPD
+TC-60112,Auscultadores sem fios,em trânsito,12/11/2026,CTT Expresso
+TC-60450,Máquina de café,em preparação,15/11/2026,DPD
+TC-59987,Monitor 27 polegadas,cancelada,,

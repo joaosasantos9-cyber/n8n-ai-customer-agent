@@ -1,0 +1,771 @@
+{
+  "name": "classificador emails v3",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "72c3dfe6-8308-4dd5-884e-60d27adf928d",
+      "name": "When chat message received",
+      "webhookId": "4a654c81-84b7-44b9-bfcb-e9543211154c"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        256
+      ],
+      "id": "2e763e64-ef37-41e2-9af9-c4f47022a992",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "g8xiJ7wt2T3nVAFh",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"categoria\": \"devolucao\",\n  \"urgencia\": \"media\",\n  \"nome_cliente\": \"Ana Silva\",\n  \"numero_encomenda\": \"TC-10234\",\n  \"resumo\": \"Cliente quer devolver um portátil com defeito.\",\n  \"escalar_para_humano\": false,\n  \"motivo_escalamento\": \"\",\n  \"resposta_sugerida\": \"Olá Ana, lamentamos o sucedido. Pode devolver o portátil nos próximos 14 dias.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        208
+      ],
+      "id": "7622462f-26d7-4b93-9b91-3e759cf31175",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "3cCepmHRc4M6JT46",
+          "mode": "list",
+          "cachedResultName": "fila humana",
+          "cachedResultUrl": "/projects/yL2TLIjrWz1QLjB6/datatables/3cCepmHRc4M6JT46"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome_cliente": "={{ $json.output.nome_cliente }}",
+            "numero_encomenda": "={{ $json.output.numero_encomenda }}",
+            "categoria": "={{ $json.output.categoria }}",
+            "urgencia": "={{ $json.output.urgencia }}",
+            "motivo_Escalamento": "={{ $json.output.motivo_escalamento }}",
+            "resumo": "={{ $json.output.resumo }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nome_cliente",
+              "displayName": "nome_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "numero_encomenda",
+              "displayName": "numero_encomenda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "categoria",
+              "displayName": "categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "urgencia",
+              "displayName": "urgencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "motivo_Escalamento",
+              "displayName": "motivo_Escalamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "resumo",
+              "displayName": "resumo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1312,
+        -176
+      ],
+      "id": "d85a7cfa-a064-4cce-8901-05c8bf05d48e",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "BKGaK1CVbonf3VXB",
+          "mode": "list",
+          "cachedResultName": "respostas_automaticas",
+          "cachedResultUrl": "/projects/yL2TLIjrWz1QLjB6/datatables/BKGaK1CVbonf3VXB"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "categoria": "={{ $('AI Agent').item.json.output.categoria }}",
+            "resposta_sugerida": "={{ $('AI Agent').item.json.output.resposta_sugerida }}",
+            "nome_cliente": "={{ $('AI Agent').item.json.output.nome_cliente }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nome_cliente",
+              "displayName": "nome_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "categoria",
+              "displayName": "categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "resposta_sugerida",
+              "displayName": "resposta_sugerida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        224
+      ],
+      "id": "de1522aa-c6db-4a51-a6cf-9ab1b2e44c8c",
+      "name": "Insert row1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        32
+      ],
+      "id": "c06116c5-da67-420f-86a3-e2aeb6e650eb",
+      "name": "ignorar spam"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "169342c4-c10d-433c-a2f4-f67a97938156",
+              "leftValue": "={{ $json.output.categoria }}",
+              "rightValue": "spam",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        1168,
+        112
+      ],
+      "id": "a7eee90d-7ecf-4341-acdf-ce452795a931",
+      "name": "É spam?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "a08fb4e6-5d94-4579-82d3-5bf56901ec68",
+              "leftValue": "={{ $json.output.escalar_para_humano }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        976,
+        0
+      ],
+      "id": "f1ee8335-7424-4bb7-a575-281e53b55c57",
+      "name": "Escalar?"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=És o assistente de apoio ao cliente da TechCasa, uma loja online de eletrónica em Portugal.\nAnalisa o email abaixo e devolve os dados pedidos.\n\nCategoria (usa exatamente uma destas palavras):\n- encomenda: estado ou atraso de uma encomenda ou entrega\n- devolucao: devoluções, trocas ou reembolsos\n- tecnico: problema técnico com um produto\n- informacao: perguntas sobre produtos, preços ou políticas\n- reclamacao: cliente insatisfeito com o atendimento ou o serviço\n- spam: publicidade ou emails sem relação com a loja\nClassifica pelo assunto principal do email. A insatisfação do cliente reflete-se na urgência e no escalamento, não na categoria. Usa \"reclamacao\" só quando a queixa é sobre o atendimento ou o serviço em geral, sem outro assunto principal.\n\nUrgência: baixa, media ou alta.\n\nEscalar para humano (escalar_para_humano = true) APENAS se:\n- o cliente ameaça com ação legal, Livro de Reclamações ou redes sociais\n- o pedido envolve um reembolso acima de 200€\n- o cliente diz que já contactou a loja 2 ou mais vezes sem resposta\nCaso contrário, false. Se escalares, explica o motivo em motivo_escalamento; se não, deixa vazio.\n\nSe o email não tiver o nome do cliente ou o número da encomenda, deixa esses campos vazios. Nunca inventes dados.\nSe o email mencionar um número de encomenda e a questão for sobre o estado ou a entrega dessa encomenda, usa a ferramenta consultar_encomenda antes de escreveres a resposta_sugerida, e usa os dados reais na resposta (estado, data prevista, transportadora). Se a ferramenta não encontrar a encomenda, pede ao cliente que confirme o número. Não uses a ferramenta noutros casos.\nPara perguntas sobre garantia, devoluções, reembolsos, portes, entregas, pagamentos ou problemas técnicos, consulta a ferramenta politicas_techcasa e usa a informação que ela devolver.\nNa resposta_sugerida, usa apenas informação que está no email do cliente ou nos dados devolvidos pelas ferramentas. Não inventes políticas nem prometas prazos que não estejam nesses dados. Se a informação não existir, diz que vais confirmar com a equipa e responder em breve.\n\nresposta_sugerida: resposta curta (máximo 4 frases), educada e profissional, em português de Portugal. Se for spam, deixa vazio.\n\nEmail:\n{{ $json.chatInput }}",
+        "hasOutputParser": true,
+        "options": {
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "064afdae-046e-4340-bfd8-af26c466835d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "b8VGQGo3zdI2lFtg",
+          "mode": "list",
+          "cachedResultName": "encomendas",
+          "cachedResultUrl": "/projects/yL2TLIjrWz1QLjB6/datatables/b8VGQGo3zdI2lFtg"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "numero_encomenda",
+              "keyValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('conditions0_Value', `     Consulta o estado de uma encomenda da TechCasa a partir do número da encomenda (formato TC-XXXXX). Devolve o produto, o estado, a data prevista e a transportadora.`, 'string') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        384
+      ],
+      "id": "8b841fea-3533-4410-82c7-6f7800491094",
+      "name": "consultar_encomenda"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "u7PIP9oykpTi8xZ2",
+          "mode": "list",
+          "cachedResultName": "testes classificador",
+          "cachedResultUrl": "/projects/yL2TLIjrWz1QLjB6/datatables/u7PIP9oykpTi8xZ2"
+        }
+      },
+      "type": "n8n-nodes-base.evaluationTrigger",
+      "typeVersion": 4.7,
+      "position": [
+        48,
+        -208
+      ],
+      "id": "1b27e6e6-6d73-4c44-9d40-396e307ce2db",
+      "name": "When fetching a dataset row"
+    },
+    {
+      "parameters": {
+        "operation": "checkIfEvaluating"
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        608,
+        0
+      ],
+      "id": "714a000e-2b50-451e-9fde-449a122a37d4",
+      "name": "Evaluation"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "u7PIP9oykpTi8xZ2",
+          "mode": "list",
+          "cachedResultName": "testes classificador",
+          "cachedResultUrl": "/projects/yL2TLIjrWz1QLjB6/datatables/u7PIP9oykpTi8xZ2"
+        },
+        "outputs": {
+          "values": [
+            {
+              "outputName": "categoria_obtida",
+              "outputValue": "={{ $json.output.categoria }}"
+            },
+            {
+              "outputName": "escalar_obtido",
+              "outputValue": "={{ $json.output.escalar_para_humano ? 'sim' : 'nao' }}"
+            },
+            {
+              "outputName": "ferramenta_obtida",
+              "outputValue": "={{ JSON.stringify($json.intermediateSteps || []).includes('consultar_encomenda') ? 'sim' : 'nao' }}"
+            },
+            {
+              "outputName": "resposta_obtida",
+              "outputValue": "={{ $json.output.resposta_sugerida }}"
+            },
+            {
+              "outputName": "politicas_obtidas",
+              "outputValue": "={{ JSON.stringify($json.intermediateSteps || []).includes('politicas_techcasa') ? 'sim' : 'nao' }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        832,
+        -96
+      ],
+      "id": "e1a1ff23-b9c4-49b2-bb1d-232318d3b7e3",
+      "name": "Evaluation1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -624
+      ],
+      "id": "58688567-32d9-408a-a5b3-a432d7bd2522",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "187a9f8d-964d-4a24-8f55-0e6c09f477ab",
+              "name": "texto",
+              "value": "POLÍTICAS DA TECHCASA  GARANTIA Todos os produtos novos vendidos pela TechCasa têm garantia legal de 3 anos a contar da data de entrega, de acordo com o Decreto-Lei n.º 84/2021. A garantia cobre defeitos de fabrico, não cobre danos causados por quedas, líquidos ou mau uso. Para acionar a garantia, o cliente deve indicar o número da encomenda e descrever o problema.  DEVOLUÇÕES E REEMBOLSOS O cliente pode devolver qualquer produto comprado online até 14 dias após a entrega, sem precisar de justificar, desde que o produto esteja completo e em bom estado. A TechCasa envia uma etiqueta de devolução gratuita por email. O reembolso é feito pelo mesmo método de pagamento até 14 dias depois de recebermos o produto. Produtos que chegam danificados são substituídos ou reembolsados, à escolha do cliente, mediante fotografias do dano.  PORTES E ENTREGAS Portugal Continental: portes grátis em compras acima de 50€; abaixo disso, 4,99€. Entrega em 1 a 3 dias úteis. Açores e Madeira: entregamos nas ilhas, com portes de 9,99€ em qualquer compra. Entrega em 5 a 7 dias úteis. Transportadoras: CTT Expresso e DPD.  PAGAMENTOS Aceitamos MB WAY, Multibanco, cartão de crédito ou débito e PayPal. Compras acima de 300€ podem ser pagas em 3 ou 6 prestações sem juros com cartão de crédito.  APOIO TÉCNICO BÁSICO Máquinas de café: se não aquece ou faz ruídos estranhos, verificar se o depósito de água está cheio e bem encaixado e fazer um ciclo de descalcificação. Se o problema continuar, o cliente pode acionar a garantia. Portáteis: se não liga, carregar pelo menos 30 minutos com o carregador original e manter o botão de ligar pressionado 15 segundos. Se não resolver, acionar a garantia.  CONTACTO A equipa de apoio responde a emails em até 2 dias úteis.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        -624
+      ],
+      "id": "1a8ebe18-0247-4822-b0ab-698a4b2c3838",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "politicas_techcasa",
+          "mode": "list"
+        },
+        "clearStore": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.4,
+      "position": [
+        672,
+        -624
+      ],
+      "id": "0ccbcd63-60c9-4bc2-aacd-941ef2c714b5",
+      "name": "Simple Vector Store"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        -384
+      ],
+      "id": "f4c0a630-9183-451a-829a-6dbad8017a66",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "g8xiJ7wt2T3nVAFh",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.texto }}",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        -464
+      ],
+      "id": "e6e566d8-5e9a-4778-b766-7b0cf27e52a0",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 500,
+        "chunkOverlap": 50,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -320
+      ],
+      "id": "c64d341f-74e0-49ac-85d6-416a036d37db",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "     Pesquisa nas políticas oficiais da TechCasa: garantia, devoluções e reembolsos, portes e prazos de entrega (incluindo Açores e Madeira), métodos de pagamento e prestações, apoio técnico básico e prazos de resposta do apoio ao cliente.",
+        "memoryKey": {
+          "__rl": true,
+          "value": "politicas_techcasa",
+          "mode": "list",
+          "cachedResultName": "politicas_techcasa"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.4,
+      "position": [
+        144,
+        416
+      ],
+      "id": "3ab78db2-b7ad-4949-b17a-cb849088f158",
+      "name": "politicas_techcasa"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        592
+      ],
+      "id": "fdde976f-0416-4e8a-bc57-8b11dd06acf7",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "g8xiJ7wt2T3nVAFh",
+          "name": "OpenAI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É spam?": {
+      "main": [
+        [
+          {
+            "node": "ignorar spam",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insert row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalar?": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "É spam?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Evaluation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_encomenda": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When fetching a dataset row": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluation": {
+      "main": [
+        [
+          {
+            "node": "Evaluation1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "politicas_techcasa": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "politicas_techcasa",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9dab4ead-bc53-4e1f-bea1-ad1c0eed6bc4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f23c0db35cb4a6a4695f912a0018662746f4141569193b5fbb7cc68e1c224925"
+  },
+  "nodeGroups": [],
+  "id": "zeOTWemb9k01peOU",
+  "tags": []
+}
